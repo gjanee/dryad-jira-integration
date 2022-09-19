@@ -118,7 +118,7 @@ function text_to_adf_json(text) {
     const line_separator = "\u2028";
     const paragraphs = (
         text
-        .replaceAll(line_separator, "\n")
+        .replaceAll(line_separator, " \n")
         .split(paragraph_separator)
         .map(p => p.replaceAll("\n", "").trim())
         .filter(p => p.length > 0)

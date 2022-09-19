@@ -30,9 +30,10 @@ command line as:
 node process-dryad-email.mjs message
 ```
 
-The script file must end in `.mjs` to enable the new ECMAScript-style
-import statements.  `message` should be a Dryad email message saved in
-plain text format.  The action taken is logged to standard output.
+The script filename must end in `.mjs` to enable the new
+ECMAScript-style import statements.  `message` should be a Dryad email
+message saved in plain text format.  The action taken is logged to
+standard output.
 
 Under Google Apps Script, the script processes all messages received
 from `no-reply-dryad@datadryad.org` (that are in the project's owner's
