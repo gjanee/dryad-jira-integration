@@ -185,8 +185,8 @@ function email_type(email_text) {
             + "for publication."
         ),
         peer_review: (
-            "Your dataset will now remain private until your "
-            + "related manuscript has been accepted."
+            "you have selected to keep your Dryad data submission in "
+            + "\"Private for peer review\" status"
         )
     };
     const text = email_text.replace(/\s+/g, " ");

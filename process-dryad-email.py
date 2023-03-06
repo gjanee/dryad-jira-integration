@@ -141,8 +141,8 @@ def email_type(email_text):
             + "for publication."
         ),
         "peer_review": (
-            "Your dataset will now remain private until your "
-            + "related manuscript has been accepted."
+            "you have selected to keep your Dryad data submission in "
+            + "\"Private for peer review\" status"
         )
     }
     matches = [t for t, m in markers.items() if m in email_text]
