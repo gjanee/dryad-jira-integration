@@ -214,7 +214,7 @@ function parse_submission_email(email_text) {
     }
     const depositor = extract(/^Dear +([^ ].*),$/m);
     const dataset_name = extract(
-        /^Thank you for your submission to Dryad titled, \"(.*?)\"\.$/ms
+        /^Thank you for your submission to Dryad titled, "(.*?)"\.$/ms
     );
     const doi = extract(
         RegExp(
