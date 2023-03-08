@@ -135,7 +135,10 @@ def create_curation_issue(email_text, doi, dataset_name, depositor):
 
 def email_type(email_text):
     markers = {
-        "submission": "Your submission will soon enter our curation process.",
+        "submission": (
+            "Once your submission has been reviewed and approved for "
+            + "publication by our curators, your dataset will be made public"
+        ),
         "publication": (
             "has been reviewed by our curation team and approved "
             + "for publication."
@@ -157,12 +160,12 @@ def parse_submission_email(email_text):
         re.M
     )[1].strip()
     dataset_name = re.search(
-        r"^Thank you for submitting your dataset entitled, \"(.*)\"\.$",
+        r"^Thank you for your submission to Dryad titled, \"(.*)\"\.$",
         email_text,
         re.M
     )[1].strip()
     doi = re.search(
-        r"^Your dataset has been assigned a unique digital object "
+        r"^Your submission has been assigned a unique digital object "
         + r"identifier \(DOI\): doi:(10\.[0-9]+/[0-9A-Z]+)",
         email_text,
         re.M

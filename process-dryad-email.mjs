@@ -179,7 +179,10 @@ function email_type(email_text) {
     // is unhelpfully word-wrapped, so we anticipate spurious
     // newlines.
     const markers = {
-        submission: "Your submission will soon enter our curation process.",
+        submission: (
+            "Once your submission has been reviewed and approved for "
+            + "publication by our curators, your dataset will be made public"
+        ),
         publication: (
             "has been reviewed by our curation team and approved "
             + "for publication."
@@ -211,11 +214,11 @@ function parse_submission_email(email_text) {
     }
     const depositor = extract(/^Dear +([^ ].*),$/m);
     const dataset_name = extract(
-        /^Thank you for submitting your dataset entitled, "(.*?)"\.$/ms
+        /^Thank you for your submission to Dryad titled, \"(.*)\"\.$/m
     );
     const doi = extract(
         RegExp(
-            "^Your dataset has been assigned a unique digital object "
+            "^Your submission has been assigned a unique digital object "
             + "identifier \\(DOI\\):\\s*doi:(10\\.[0-9]+/[0-9A-Z]+)",
             "m"
         )
