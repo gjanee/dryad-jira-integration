@@ -219,7 +219,7 @@ function parse_submission_email(email_text) {
     const doi = extract(
         RegExp(
             "^Your submission has been assigned a unique digital object "
-            + "identifier \\(DOI\\):\\s*doi:(10\\.[0-9]+/[0-9A-Z]+)",
+            + "identifier \\(DOI\\):\\s*doi:(10\\.[0-9]+/[0-9A-Za-z.]+)",
             "m"
         )
     );
