@@ -180,8 +180,8 @@ function email_type(email_text) {
     // newlines.
     const markers = {
         submission: (
-            "Once your submission has been reviewed and approved for "
-            + "publication by our curators, your dataset will be made public"
+            "Your data submission will soon be evaluated by a member "
+            + "of our curation team"
         ),
         publication: (
             "has been reviewed by our curation team and approved "
