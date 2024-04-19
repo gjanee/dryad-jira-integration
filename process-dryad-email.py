@@ -165,8 +165,8 @@ def parse_submission_email(email_text):
         re.M
     )[1].strip()
     doi = re.search(
-        r"^Your submission has been assigned a unique digital object "
-        + r"identifier \(DOI\): doi:(10\.[0-9]+/[0-9A-Za-z.]+)",
+        r"A unique digital object identifier \(DOI\): "
+        + r"doi:(10\.[0-9]+/[0-9A-Za-z.]+)",
         email_text,
         re.M
     )[1]
