@@ -1,14 +1,15 @@
 #! /usr/bin/env python3
 
-# Demonstration program that creates or updates a Jira issue from a
-# dataset submission email message received from Dryad.  The logic is
-# very specific here; this is in no way a generic program.
+# Utility program that creates or updates a Jira issue from an
+# automated email message received from Dryad.  The logic is very
+# specific here; this is in no way a generic program.
 #
 # Usage: process-dryad-email.py email_address:token message
 #
 # `email_address` and `token` are used for Jira authentication;
 # `token` should be an API token obtained from atlassian.com.
-# `message` should be the email message as plain text.
+# `message` should be a file containing the email message as plain
+# text.
 #
 # Requires the `requests` library (python -m pip install requests).
 #
@@ -29,6 +30,10 @@ dataset_name_field = "customfield_10394"
 doi_field = "customfield_10396"
 depositor_name_field = "customfield_10398"
 curation_status_field = "customfield_10403"
+
+doi_re_pattern = r"doi:(10\.[0-9]+/[0-9A-Za-z.]+)"
+
+# JIRA API FUNCTIONS
 
 def api_call(method, url, success_code, **kwargs):
     headers = {
@@ -79,6 +84,21 @@ def get_curation_issues():
         except:
             raise Exception(f"API unexpected response, {r.text}")
     return issues
+
+def get_curation_issue_by_doi(doi):
+    # Well here's a bummer.  There seems to be no way to query Jira
+    # using JQL to find a curation issue whose DOI field matches a
+    # given DOI, because DOI is a custom field.  Thus we are forced to
+    # download all curation issues.  Over time this will result in
+    # quadratic behavior.
+    ci_list = list(filter(lambda ci: ci.doi == doi, get_curation_issues()))
+    if len(ci_list) > 0:
+        assert len(ci_list) == 1, (
+            f"more than one curation issue matches DOI {doi}"
+        )
+        return ci_list[0]
+    else:
+        return None
 
 def text_to_adf_json(text):
     # Convert text to Atlassian Document Format JSON.
@@ -131,49 +151,10 @@ def create_curation_issue(email_text, doi, dataset_name, depositor):
     try:
         return r.json()["key"]
     except:
-        assert False, f"API unexpected response, {r.text}"
-
-def email_type(email_text):
-    markers = {
-        "submission": (
-            "Your data submission will soon be evaluated by a member "
-            + "of our curation team"
-        ),
-        "publication": (
-            "has been reviewed by our curation team and approved "
-            + "for publication."
-        ),
-        "peer_review": (
-            "you have selected to keep your Dryad data submission in "
-            + "\"Private for peer review\" status"
-        )
-    }
-    matches = [t for t, m in markers.items() if m in email_text]
-    assert len(matches) >= 1, "unrecognized email message type"
-    assert len(matches) == 1, "ambiguous email message type"
-    return matches[0]
-
-def parse_submission_email(email_text):
-    depositor = re.search(
-        r"^Dear +([^ ].*),$",
-        email_text,
-        re.M
-    )[1].strip()
-    dataset_name = re.search(
-        r"^Thank you for your submission to Dryad titled, \"(.*)\"\.$",
-        email_text,
-        re.M
-    )[1].strip()
-    doi = re.search(
-        r"A unique digital object identifier \(DOI\): "
-        + r"doi:(10\.[0-9]+/[0-9A-Za-z.]+)",
-        email_text,
-        re.M
-    )[1]
-    return (doi, dataset_name, depositor)
+        raise Exception(f"API unexpected response, {r.text}")
 
 def change_issue_status(key, new_status):
-    # N.B.: Status changes must obey the transitions allowed by the
+    # Caution: status changes must obey the transitions allowed by the
     # workflow set up in Jira.
     r = api_call("GET", f"/issue/{key}/transitions", 200)
     try:
@@ -204,21 +185,69 @@ def change_issue_fields(key, **kwargs):
     )
     api_call("PUT", f"/issue/{key}", 204, data=payload)
 
-def process_email(email_text):
-    if email_type(email_text) != "submission":
-        print("not a submission email, ignoring")
-        return
+# PARSING
+
+def email_type(email_text):
+    markers = {
+        "submission": (
+            "Your data submission will soon be evaluated by a member "
+            + "of our curation team"
+        ),
+        "publication": (
+            "has been reviewed by our curation team and approved "
+            + "for publication."
+        ),
+        "peer_review": (
+            "you have selected to keep your Dryad data submission in "
+            + "\"Private for peer review\" status"
+        ),
+        "withdrawal": (
+            "Your data submission has been withdrawn"
+        )
+    }
+    matches = [t for t, m in markers.items() if m in email_text]
+    assert len(matches) >= 1, "unrecognized email message type"
+    assert len(matches) == 1, "ambiguous email message type"
+    return matches[0]
+
+def extract_field(email_text, name, pattern):
+    try:
+        return re.search(pattern, email_text, re.M)[1].strip()
+    except:
+        raise Exception(f"parse error: unable to locate {name}")
+
+def parse_submission_email(email_text):
+    depositor = extract_field(
+        email_text,
+        "depositor name",
+        r"^Dear +([^ ].*),$"
+    )
+    dataset_name = extract_field(
+        email_text,
+        "dataset name",
+        r"^Thank you for your submission to Dryad titled, \"(.*)\"\.$"
+    )
+    doi = extract_field(
+        email_text,
+        "DOI",
+        r"A unique digital object identifier \(DOI\): " + doi_re_pattern
+    )
+    return (doi, dataset_name, depositor)
+
+def parse_withdrawal_email(email_text):
+    doi = extract_field(email_text, "DOI", r"DOI: " + doi_re_pattern)
+    return doi
+
+# MESSAGE PROCESSING
+
+def process_submission_email(email_text):
     doi, dataset_name, depositor = parse_submission_email(email_text)
-    # Well here's a bummer.  There seems to be no way to query Jira
-    # using JQL to find a curation issue whose DOI field matches the
-    # DOI in hand, because DOI is a custom field.  Thus we are forced
-    # to download all curation issues.  Over time this will result in
-    # quadratic behavior.
-    ci_match = list(filter(lambda ci: ci.doi == doi, get_curation_issues()))
-    if len(ci_match) > 0:
-        ci = ci_match[0]
+    ci = get_curation_issue_by_doi(doi)
+    if ci != None:
         if ci.status == "Waiting on Peer Review":
-            print("issue already exists, is PPR, changing to To Do")
+            print(
+                "Disposition: issue already exists, is PPR, changing to To Do"
+            )
             # Must follow allowed transitions.
             change_issue_status(ci.key, "In Progress")
             change_issue_status(ci.key, "To Do")
@@ -230,18 +259,51 @@ def process_email(email_text):
             }
             change_issue_fields(ci.key, **updates)
         else:
-            print("issue already exists, ignoring")
+            print("Disposition: issue already exists, ignoring")
     else:
-        print("creating new issue")
+        print("Disposition: creating new issue")
         key = create_curation_issue(email_text, doi, dataset_name, depositor)
         print(key)
 
-# Processing
+def process_withdrawal_email(email_text):
+    doi = parse_withdrawal_email(email_text)
+    ci = get_curation_issue_by_doi(doi)
+    if ci != None:
+        if ci.status != "Resolved":
+            print("Disposition: issue exists, changing to Resolved/Won't Do")
+            # Changing to In Progress first should be safe.
+            change_issue_status(ci.key, "In Progress")
+            change_issue_status(ci.key, "Resolved")
+            updates = {
+                "resolution": {
+                    "name": "Won't Do"
+                },
+                curation_status_field: {
+                    "value": "Withdrawn"
+                }
+            }
+            change_issue_fields(ci.key, **updates)
+        else:
+            print("Disposition: issue exists, already resolved, ignoring")
+    else:
+        print("Disposition: no matching issue, ignoring")
+
+def process_email(email_text):
+    type = email_type(email_text)
+    print(f"Email type: {type}")
+    if type == "submission":
+        process_submission_email(email_text)
+    elif type == "withdrawal":
+        process_withdrawal_email(email_text)
+    else:
+        print("Disposition: ignoring")
+
+# CONTROL
 
 auth = requests.auth.HTTPBasicAuth(*sys.argv[1].split(":", 1))
 process_email(open(sys.argv[2]).read())
 
-# Debugging/development aids
+# DEBUGGING/DEVELOPMENT AIDS
 
 def print_issue(key):
     r = api_call("GET", f"/issue/{key}", 200)
