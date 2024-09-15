@@ -12,9 +12,20 @@ The logic in a nutshell:
 
   - If there is, the notification is ignored unless the Jira issue
     status is "Waiting on Peer Review," in which case the issue status
-    is changed to "To Do" and any assignee is removed.
+    is changed to "To Do," any assignee is removed, and the curation
+    status is set to "Submitted."
 
   - If there is not, a new Jira issue is created.
+
+- Processing of a withdrawal notification similarly depends on whether
+  there is already an existing Jira issue or not.
+
+  - If there is, and the Jira issue status is "Resolved," then the
+    notification is ignored.  Otherwise, the issue status is set to
+    "Resolved" with a disposition of "Won't Do," and the curation
+    status is set to "Withdrawn."
+
+  - If there is not, the notification is ignored.
 
 `process-dryad-email.mjs` can be run under either of two platforms,
 Node.js or Google Apps Script.  A few declarations at the top of the
@@ -37,8 +48,8 @@ standard output.
 
 Under Google Apps Script, the script processes all messages received
 from `no-reply-dryad@datadryad.org` (that are in the project's owner's
-Gmail account).  After processing, all such messages are moved to the
-trash, whether they are submission notifications or not.
+Gmail account).  After processing, **all** such messages are moved to
+the trash.
 
 To install the script in Google Apps Script:
 
