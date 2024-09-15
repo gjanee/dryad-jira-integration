@@ -271,8 +271,9 @@ def process_withdrawal_email(email_text):
     if ci != None:
         if ci.status != "Resolved":
             print("Disposition: issue exists, changing to Resolved/Won't Do")
-            # Changing to In Progress first should be safe.
-            change_issue_status(ci.key, "In Progress")
+            # Change to In Progress first.
+            if ci.status != "In Progress":
+                change_issue_status(ci.key, "In Progress")
             change_issue_status(ci.key, "Resolved")
             updates = {
                 "resolution": {
