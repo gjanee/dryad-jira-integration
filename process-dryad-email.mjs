@@ -1,21 +1,23 @@
-// Documentation references:
-//
-// Jira API
-// https://developer.atlassian.com/cloud/jira/platform/rest/v3/intro/
-//
-// Google Apps Script
-// https://developers.google.com/apps-script/overview
-//
-// Gmail Service
-// https://developers.google.com/apps-script/reference/gmail
-//
-// Node.js
-// https://nodejs.org/api/
-//
-// node-fetch
-// https://www.npmjs.com/package/node-fetch
+/*
+ * Documentation references:
+ *
+ * Jira API
+ * https://developer.atlassian.com/cloud/jira/platform/rest/v3/intro/
+ *
+ * Google Apps Script
+ * https://developers.google.com/apps-script/overview
+ *
+ * Gmail Service
+ * https://developers.google.com/apps-script/reference/gmail
+ *
+ * Node.js
+ * https://nodejs.org/api/
+ *
+ * node-fetch
+ * https://www.npmjs.com/package/node-fetch
+ */
 
-// Platform selection and abstraction
+// PLATFORM SELECTION AND ABSTRACTION
 
 const using_nodejs = false;
 // Uncomment if running under Node.js:
@@ -29,9 +31,11 @@ const status_fn = (r) => using_nodejs ? r.status : r.getResponseCode();
 const text_content_fn = (r) => using_nodejs ? r.text() : r.getContentText();
 const paragraph_separator = using_nodejs ? /\n+/ : /\n{2,}/;
 
-// Global constants
+// GLOBAL CONSTANTS
 
 const base_url = "https://ucsb-atlas.atlassian.net/rest/api/3";
+
+// Fill in below
 const auth = base64_encode_fn("email_address:api_token");
 
 const dataset_name_field = "customfield_10394";
@@ -39,7 +43,26 @@ const doi_field = "customfield_10396";
 const depositor_name_field = "customfield_10398";
 const curation_status_field = "customfield_10403";
 
-// Functions
+const doi_re_pattern = "doi:(10\\.[0-9]+/[0-9A-Za-z.]+)";
+
+// UTILITY FUNCTIONS
+
+function encode_query_string(params) {
+    return (
+        Object.keys(params)
+        .map(k => encodeURIComponent(k) + "=" + encodeURIComponent(params[k]))
+        .join("&")
+    );
+}
+
+function check_defined(value) {
+    if (value === undefined) {
+        throw new Error("undefined value");
+    }
+    return value;
+}
+
+// JIRA API FUNCTIONS
 
 async function api_call(method, url, success_code, data) {
     let options = {
@@ -61,21 +84,6 @@ async function api_call(method, url, success_code, data) {
     return r;
 }
 
-function encode_query_string(params) {
-    return (
-        Object.keys(params)
-        .map(k => encodeURIComponent(k) + "=" + encodeURIComponent(params[k]))
-        .join("&")
-    );
-}
-
-function check_defined(value) {
-    if (value === undefined) {
-        throw new Error("undefined value");
-    }
-    return value;
-}
-
 async function get_curation_issues() {
     let issues = [];
     let start = 0;
@@ -88,8 +96,8 @@ async function get_curation_issues() {
             }
         );
         const r = await api_call("GET", "/search?" + query, 200);
-        const j = JSON.parse(await text_content_fn(r));
         try {
+            const j = JSON.parse(await text_content_fn(r));
             if (j.issues.length == 0) {
                 break;
             }
@@ -110,6 +118,23 @@ async function get_curation_issues() {
         }
     }
     return issues;
+}
+
+async function get_curation_issue_by_doi(doi) {
+    // Well here's a bummer.  There seems to be no way to query Jira
+    // using JQL to find a curation issue whose DOI field matches a
+    // given DOI, because DOI is a custom field.  Thus we are forced
+    // to download all curation issues.  Over time this will result in
+    // quadratic behavior.
+    const ci_list = (await get_curation_issues()).filter(ci => ci.doi == doi);
+    if (ci_list.length > 0) {
+        if (ci_list.length != 1) {
+            throw new Error(`more than one curation issue matches DOI ${doi}`);
+        }
+        return ci_list[0];
+    } else {
+        return null;
+    }
 }
 
 function text_to_adf_json(text) {
@@ -174,61 +199,9 @@ async function create_curation_issue(
     }
 }
 
-function email_type(email_text) {
-    // When running under Google Apps Script, the email "plain text"
-    // is unhelpfully word-wrapped, so we anticipate spurious
-    // newlines.
-    const markers = {
-        submission: (
-            "Your data submission will soon be evaluated by a member "
-            + "of our curation team"
-        ),
-        publication: (
-            "has been reviewed by our curation team and approved "
-            + "for publication."
-        ),
-        peer_review: (
-            "you have selected to keep your Dryad data submission in "
-            + "\"Private for peer review\" status"
-        )
-    };
-    const text = email_text.replace(/\s+/g, " ");
-    const matches = Object.keys(markers).filter(
-        k => text.includes(markers[k])
-    );
-    if (matches.length != 1) {
-        throw new Error(
-            (matches.length == 0 ? "unrecognized" : "ambiguous")
-            + " email message type"
-        );
-    }
-    return matches[0];
-}
-
-function parse_submission_email(email_text) {
-    // When running under Google Apps Script, the email "plain text"
-    // is unhelpfully word-wrapped, so we anticipate spurious newlines
-    // and weed them out.
-    function extract(regexp) {
-        return regexp.exec(email_text)[1].replaceAll("\n", "").trim();
-    }
-    const depositor = extract(/^Dear +([^ ].*),$/m);
-    const dataset_name = extract(
-        /^Thank you for your submission to Dryad titled, "(.*?)"\.$/ms
-    );
-    const doi = extract(
-        RegExp(
-            "A unique digital object identifier \\(DOI\\):\\s+"
-            + "doi:(10\\.[0-9]+/[0-9A-Za-z.]+)",
-            "m"
-        )
-    );
-    return [doi, dataset_name, depositor];
-}
-
 async function change_issue_status(key, new_status) {
-    // N.B.: Status changes must obey the transitions allowed by the
-    // workflow set up in Jira.
+    // Caution: status changes must obey the transitions allowed by
+    // the workflow set up in Jira.
     const r = await api_call("GET", `/issue/${key}/transitions`, 200);
     const j = JSON.parse(await text_content_fn(r));
     let t;
@@ -264,19 +237,88 @@ async function change_issue_fields(key, updates) {
     await api_call("PUT", `/issue/${key}`, 204, JSON.stringify(payload));
 }
 
-async function process_email(email_text) {
-    if (email_type(email_text) != "submission") {
-        console.log("Disposition: not a submission email, ignoring");
-        return;
+// PARSING
+
+// N.B.: When running under Google Apps Script, the email "plain text"
+// is unhelpfully word-wrapped, so we anticipate spurious newlines and
+// weed them out.
+
+function email_type(email_text) {
+    const markers = {
+        submission: (
+            "Your data submission will soon be evaluated by a member "
+            + "of our curation team"
+        ),
+        publication: (
+            "has been reviewed by our curation team and approved "
+            + "for publication."
+        ),
+        peer_review: (
+            "you have selected to keep your Dryad data submission in "
+            + "\"Private for peer review\" status"
+        ),
+        withdrawal: (
+            "Your data submission has been withdrawn"
+        )
+    };
+    const text = email_text.replace(/\s+/g, " ");
+    const matches = Object.keys(markers).filter(
+        k => text.includes(markers[k])
+    );
+    if (matches.length != 1) {
+        throw new Error(
+            (matches.length == 0 ? "unrecognized" : "ambiguous")
+            + " email message type"
+        );
     }
+    return matches[0];
+}
+
+function extract_field(email_text, name, regexp) {
+    try {
+        return regexp.exec(email_text)[1].replaceAll(/\s+/g, " ").trim();
+    } catch (e) {
+        throw new Error(`parse error: unable to locate ${name}`);
+    }
+}
+
+function parse_submission_email(email_text) {
+    const depositor = extract_field(
+        email_text,
+        "depositor name",
+        /^Dear +([^ ].*),$/m
+    );
+    const dataset_name = extract_field(
+        email_text,
+        "dataset name",
+        /^Thank you for your submission to Dryad titled, "(.*?)"\.$/ms
+    );
+    const doi = extract_field(
+        email_text,
+        "DOI",
+        RegExp(
+            "A unique digital object identifier \\(DOI\\):\\s+"
+            + doi_re_pattern
+        )
+    );
+    return [doi, dataset_name, depositor];
+}
+
+function parse_withdrawal_email(email_text) {
+    const doi = extract_field(
+        email_text,
+        "DOI",
+        RegExp("DOI:\\s+" + doi_re_pattern)
+    );
+    return doi;
+}
+
+// MESSAGE PROCESSING
+
+async function process_submission_email(email_text) {
     const [doi, dataset_name, depositor] = parse_submission_email(email_text);
-    // Well here's a bummer.  There seems to be no way to query Jira
-    // using JQL to find a curation issue whose DOI field matches the
-    // DOI in hand, because DOI is a custom field.  Thus we are forced
-    // to download all curation issues.  Over time this will result in
-    // quadratic behavior.
-    const ci = (await get_curation_issues()).find(ci => ci.doi == doi);
-    if (ci !== undefined) {
+    const ci = await get_curation_issue_by_doi(doi);
+    if (ci !== null) {
         if (ci.status == "Waiting on Peer Review") {
             console.log(
                 "Disposition: issue already exists, is "
@@ -307,6 +349,52 @@ async function process_email(email_text) {
     }
 }
 
+async function process_withdrawal_email(email_text) {
+    const doi = parse_withdrawal_email(email_text);
+    const ci = await get_curation_issue_by_doi(doi);
+    if (ci !== null) {
+        if (ci.status != "Resolved") {
+            console.log(
+                "Disposition: issue exists, changing to Resolved/Won't Do"
+            );
+            // Change to In Progress first.
+            if (ci.status != "In Progress") {
+                await change_issue_status(ci.key, "In Progress");
+            }
+            await change_issue_status(ci.key, "Resolved");
+            let updates = {
+                resolution: {
+                    name: "Won't Do"
+                }
+            };
+            updates[curation_status_field] = {
+                value: "Withdrawn"
+            };
+            await change_issue_fields(ci.key, updates);
+        } else {
+            console.log(
+                "Disposition: issue exists, already resolved, ignoring"
+            );
+        }
+    } else {
+        console.log("Disposition: no matching issue, ignoring");
+    }
+}
+
+async function process_email(email_text) {
+    const type = email_type(email_text);
+    console.log(`Email type: ${type}`);
+    if (type == "submission") {
+        await process_submission_email(email_text);
+    } else if (type == "withdrawal") {
+        await process_withdrawal_email(email_text);
+    } else {
+        console.log("Disposition: ignoring");
+    }
+}
+
+// CONTROL
+
 // Main Google Apps Script processing
 
 async function main() {
@@ -336,7 +424,7 @@ if (using_nodejs) {
     command_line();
 }
 
-// Debugging/development aids
+// DEBUGGING/DEVELOPMENT AIDS
 
 async function print_issue(key) {
     const r = await api_call("GET", `/issue/${key}`, 200);
