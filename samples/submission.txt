@@ -1,19 +1,18 @@
 From: no-reply-dryad@datadryad.org
-Subject: Dryad Submission "High Resolution Land Cover Map of Tanzania from 2018 to 2022."
-Date: September 23, 2024 at 4:01:07 PM PDT
-To: lsong@ucsb.edu
+Subject: Dryad Submission "Primary data for: Minimal conditions for solidification and thermal processing of colloidal gels"
+Date: November 7, 2024 at 11:21:55 AM PST
+To: helgeson@ucsb.edu
 
-Dear Lei Song,
-Thank you for your submission to Dryad titled, "High Resolution Land Cover Map of Tanzania from 2018 to 2022.".
-Your data submission will soon be evaluated by a member of our curation team. Keep in mind that datasets are evaluated in the order they are received. 
-Your dataset has been assigned two important links:
-	•	Reviewer URL: https://datadryad.org/stash/share/6o4ytuTTp5tzYwIxzZHbVlXbvjsaRIWbbuLgTC7MBUU. This temporary link can be shared with the journal office or collaborators during the peer-review process to allow access only to the data files included with your submission. This link will expire upon publication of your Dryad dataset. 
-	•	A unique digital object identifier (DOI): doi:10.5061/dryad.xd2547dsg When your dataset has been approved for publication by a member of our curation team, it will be made public. This DOI link is permanent and should be provided to the journal office for inclusion in the Data Availability statement of your published article. 
-You can check the status of your data submission via your Dryad "My datasets" page. If you have any questions, please contact Dryad's Helpdesk at help@datadryad.org. 
+Dear Matthew Helgeson,
+Thank you for your submission to Dryad titled, "Primary data for: Minimal conditions for solidification and thermal processing of colloidal gels".
+Each dataset submitted to Dryad undergoes our process of curation and approval before being made publicly available. After a dataset is submitted, it enters our queue for curation. Datasets are evaluated in chronological order, with the oldest dataset submissions at the top of the queue. Your data submission will soon be evaluated by a member of our curation team who will contact you with any revision requests. After your dataset is approved by a curator, it will be published and made publicly available, and the dataset DOI will be active. 
+If you do not intend for your data to be publicly available yet, contact us at help@datadryad.org and we will place your submission in ‘Private for Peer Review’ status. 
+Your dataset has been assigned an important link:
+	•	A unique digital object identifier (DOI): https://doi.org/10.25349/D9TS5T This DOI link is permanent and should included in the Data Availability Statement of your published article. 
+The time from initial submission to final publication depends on the volume and complexity of submissions received ahead of yours, that of your submission, and your timely response to modifications required for dataset approval — which will be communicated by a curator, if necessary. You can find more information on our Publication Process help page: https://datadryad.org/stash/process. 
+You can check the status of your data submission via your Dryad "My datasets" page.
+If you have any questions, please contact us at help@datadryad.org. 
 Thank you for choosing Dryad to host your data. We appreciate your support.
-The Dryad Team
-We would greatly appreciate your feedback! Please complete a short survey about your submission experience.
-Subscribe to Dryad's monthly round-up of compelling datasets.
+We would greatly appreciate your feedback! Please complete a short survey about your submission experience. 
+The Dryad Team https://datadryad.org 
 Please do not reply to this email.
-The Dryad Team
-https://datadryad.org
