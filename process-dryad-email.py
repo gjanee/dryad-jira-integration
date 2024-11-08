@@ -31,7 +31,7 @@ doi_field = "customfield_10396"
 depositor_name_field = "customfield_10398"
 curation_status_field = "customfield_10403"
 
-doi_re_pattern = r"https://doi.org/(10\.[0-9]+/[0-9A-Za-z.]+)"
+doi_re_pattern = r"https://doi\.org/(10\.[0-9]+/[0-9A-Za-z.]+)"
 
 # JIRA API FUNCTIONS
 

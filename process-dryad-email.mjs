@@ -43,7 +43,7 @@ const doi_field = "customfield_10396";
 const depositor_name_field = "customfield_10398";
 const curation_status_field = "customfield_10403";
 
-const doi_re_pattern = "https://doi.org/(10\\.[0-9]+/[0-9A-Za-z.]+)";
+const doi_re_pattern = "https://doi\\.org/(10\\.[0-9]+/[0-9A-Za-z.]+)";
 
 // UTILITY FUNCTIONS
 
