@@ -198,7 +198,7 @@ def email_type(email_text):
             + "for publication."
         ),
         "peer_review": (
-            "you have selected to keep your Dryad data submission in "
+            "you have selected to keep your submission in "
             + "\"Private for peer review\" status"
         ),
         "withdrawal": (

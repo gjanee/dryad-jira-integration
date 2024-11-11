@@ -1,22 +1,22 @@
 From: no-reply-dryad@datadryad.org
-Subject: Dryad Submission "Functional characterization of luciferase in a brittle star indicates parallel evolution influenced by genomic availability of haloalkane dehalogenase"
-Date: October 14, 2024 at 4:44:28 PM MDT
-To: emily.lau@lifesci.ucsb.edu
+Subject: Dryad Submission "An abundant mutualist can protect corals from multiple stressors"
+Date: November 10, 2024 at 1:51:25 PM PST
+To: jrenzi@ucsb.edu
 
-Dear Emily Lau,
-Thank you for submitting your dataset "Functional characterization of luciferase in a brittle star indicates parallel evolution influenced by genomic availability of haloalkane dehalogenase" (doi:10.5061/dryad.rv15dv4gm) to Dryad.
-Your dataset has been assigned two important links:
-	•	Reviewer URL: http://datadryad.org/stash/share/CM4XCBCNS-0D0-rDKrPOqaotC2LOTXbDCZ-0jV2gl0g. This temporary link can be shared with the journal office or collaborators during the peer-review process to allow access only to the data files included with your submission. This link will expire upon publication of your Dryad dataset. 
-	•	A unique digital object identifier (DOI): doi:10.5061/dryad.rv15dv4gm When your dataset has been approved for publication by a member of our curation team, it will be made public. This DOI link is permanent and should be provided to the journal office for inclusion in the Data Availability statement of your published article. 
-Please note, you have selected to keep your Dryad data submission in "Private for peer review" status. While in this status, your submission will not enter our curation process for review and publication.
-When your related manuscript has been accepted, or when you are ready to initiate the curation process and proceed to publication, follow these steps:
+Dear Julianna Renzi,
+Thank you for your dataset submission to Dryad. Please note, you have selected to keep your submission in "Private for peer review" status. While in this status, your submission will not enter our curation process for review and publication. 
+Your Dryad dataset titled, "An abundant mutualist can protect corals from multiple stressors" (doi:10.5061/dryad.hdr7sqvtd) has been assigned two important links:
+
+	•	A unique, permanent digital object identifier: https://doi.org/10.5061/dryad.hdr7sqvtd  After your dataset has been approved for publication by a member of our curation team, this link will become active and your dataset will be made public. This DOI link is permanent and should be included in the Data Availability Statement of your published articles. 
+	•	Reviewer URL: http://datadryad.org/stash/share/f6aXM4Qw0ZehntmNArbesuXgUQT6Z50EDxFELB9Rw7s.  This temporary link can be shared with the journal office or collaborators during the peer-review process to allow access only to the data files included with your submission. This link will only work while your dataset is in the Private for Peer Review status and should not be used in the Data Availability Statement in any related manuscript. 
+
+When your related manuscript has been accepted, or when you are ready to initiate the curation process and proceed to publication, follow these steps: 
 	1.	Login to https://datadryad.org
 	2.	Click on "My datasets" to view your list of data submissions.
 	3.	Click "Release for curation" on your dataset.
-If you have any questions, please contact Dryad's Helpdesk at help@datadryad.org.
+
+If you have any questions, please contact us at help@datadryad.org.
 Thank you for choosing Dryad to host your data. We appreciate your support.
-The Dryad Team
-We would greatly appreciate your feedback! Please complete a short survey about your submission experience.
+We would greatly appreciate your feedback! Please complete a short survey about your submission experience . 
+The Dryad Team https://datadryad.org 
 Please do not reply to this email.
-The Dryad Team
-https://datadryad.org
