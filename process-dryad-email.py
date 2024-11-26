@@ -194,7 +194,7 @@ def email_type(email_text):
             + "of our curation team"
         ),
         "publication": (
-            "has been reviewed by our curation team and approved "
+            "has been reviewed by a curator and approved "
             + "for publication."
         ),
         "peer_review": (

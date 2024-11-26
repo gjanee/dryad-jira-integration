@@ -1,16 +1,13 @@
 From: no-reply-dryad@datadryad.org
-Subject: Dryad Submission "Subjective well-being across the life course among non-industrialized populations"
-Date: September 23, 2024 at 11:52:28 AM PDT
-To: gurven@anth.ucsb.edu
+Subject: Dryad Submission "Selection on Sporulation Strategies in a Metapopulation Can Lead to Coexistence"
+Date: November 22, 2024 at 3:43:16 PM PST
+To: sproul@ucsb.edu
 
-Dear Michael Gurven,
-Your dataset titled "Subjective well-being across the life course among non-industrialized populations" has been reviewed by our curation team and approved for publication. It is publicly accessible via this link: https://doi.org/doi:10.5061/dryad.37pvmcvth. 
-Your related software files are being hosted by Zenodo and are now published and publicly available here: https://doi.org/10.5281/zenodo.13830502
-If you would like to update your dataset you may do so, at any time, by clicking "Revise submission" on your "My datasets" page. Please note, any edits made will create a new version of your submission, however, the DOI will remain unchanged. Only the most recent version of your dataset will be packaged and available for download via the "Download dataset" button. Previous versions can be accessed via the "Data files" section. 
+Dear Stephen Proulx,
+Your dataset titled "Selection on Sporulation Strategies in a Metapopulation Can Lead to Coexistence" has been reviewed by a curator and approved for publication. It is publicly accessible via this link: https://doi.org/10.5061/dryad.18931zd6m. 
+Your related software files are now published and publicly available on Zenodo: https://doi.org/10.5281/zenodo.14042760 
+You can update your dataset, at any time, by clicking "Revise submission" on your "My datasets" page. Any edits to your data will create a new version, but the DOI will not change. Only the most recent version of your dataset will be available via the "Download dataset" button. Previous versions can be accessed via the "Data files" section. Updated versions of your dataset will be re-evaluated to ensure Dryad's standards for publication are maintained. 
 Thank you for choosing Dryad to host your data.
-The Dryad Team
-We welcome your feedback! Please share your thoughts with us at: help@datadryad.org, or sign up for sneak peeks of new Dryad features.
-Subscribe to Dryad's monthly round-up of compelling datasets.
+We welcome your feedback! Please share your thoughts with us at: help@datadryad.org, or sign up for sneak peeks of new Dryad features. 
+Kind regards, The Dryad Team https://datadryad.org 
 Please do not reply to this email.
-The Dryad Team
-https://datadryad.org
